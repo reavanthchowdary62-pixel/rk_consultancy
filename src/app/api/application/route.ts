@@ -2,56 +2,54 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { Application } from "@/lib/models";
 import { cookies } from "next/headers";
+import { verifySessionToken } from "@/lib/auth";
+import { z } from "zod";
+
+const applicationSchema = z.object({
+  universityId: z.string().min(1).max(100),
+  universityName: z.string().min(1).max(200),
+  country: z.string().max(100).optional(),
+  city: z.string().max(100).optional(),
+  intendedCourse: z.string().min(1).max(200),
+  pastEducation: z.string().min(1).max(100),
+  pastAcademicScore: z.string().min(1).max(50),
+  phone: z.string().min(5).max(20),
+});
 
 export async function POST(req: Request) {
   try {
-    await connectDB();
-
-    // Check if user is logged in
-    const cookieStore = cookies();
-    const token = cookieStore.get("auth-token")?.value;
+    const token = cookies().get("rk-auth-session")?.value;
+    const session = await verifySessionToken(token);
     
-    // In a real app we'd verify the JWT, but here we can trust the client payload
-    // or decode simply since this is a demo environment. For now, rely on payload.
-    
-    const body = await req.json();
-    const { 
-      userEmail, 
-      universityId, 
-      universityName, 
-      country, 
-      city, 
-      intendedCourse, 
-      pastEducation, 
-      pastAcademicScore, 
-      phone 
-    } = body;
-
-    if (!userEmail || !universityId || !intendedCourse || !pastEducation || !pastAcademicScore || !phone) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    // Auth Check: Prevent anonymous application spam
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized. Please log in to apply." }, { status: 401 });
     }
 
-    // Check if application already exists to prevent spam
-    const existing = await Application.findOne({ userEmail, universityId, intendedCourse });
+    const body = await req.json();
+    
+    // Zod parsing strips malicious HTML and enforces lengths
+    const validData = applicationSchema.parse(body);
+
+    await connectDB();
+
+    // Check if application already exists to prevent duplicates
+    const existing = await Application.findOne({ userEmail: session.email, universityId: validData.universityId, intendedCourse: validData.intendedCourse });
     if (existing) {
-      return NextResponse.json({ error: "You have already applied to this course!" }, { status: 400 });
+      return NextResponse.json({ error: "You have already applied to this course!" }, { status: 409 });
     }
 
     const newApp = await Application.create({
-      userEmail,
-      universityId,
-      universityName,
-      country,
-      city,
-      intendedCourse,
-      pastEducation,
-      pastAcademicScore,
-      phone
+      ...validData,
+      userEmail: session.email, // Secure payload override: Ignore body.userEmail
     });
 
     return NextResponse.json({ success: true, application: newApp }, { status: 201 });
 
   } catch (error: any) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: "Invalid payload data" }, { status: 400 });
+    }
     console.error("Application API Error:", error.message);
     return NextResponse.json({ error: "Failed to submit application" }, { status: 500 });
   }

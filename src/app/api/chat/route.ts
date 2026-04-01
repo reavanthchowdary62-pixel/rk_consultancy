@@ -1,6 +1,7 @@
 import { OpenAIStream, StreamingTextResponse } from "ai";
 import { Configuration, OpenAIApi } from "openai-edge";
 import seedData from "@/data/seed.json";
+import { rateLimit } from "@/lib/rateLimit";
 
 // Create an OpenAI API client (edge friendly)
 const config = new Configuration({
@@ -20,6 +21,13 @@ Your goals:
 
 export async function POST(req: Request) {
   try {
+    // RATE LIMITING PROTECTION: Max 15 messages per minute per IP to prevent OpenAI credit drain
+    const ip = req.headers.get('x-forwarded-for') || "127.0.0.1";
+    const allowed = rateLimit(ip, 15, 60 * 1000);
+    if (!allowed) {
+      return new Response('Rate limit exceeded. Please wait a minute before sending more messages.', { status: 429 });
+    }
+
     const { messages } = await req.json();
     const lastMessage = messages[messages.length - 1].content.toLowerCase();
 

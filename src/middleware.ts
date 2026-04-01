@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { verifySessionToken } from './lib/auth';
 
-export function middleware(request: NextRequest) {
-  // Check if the user has an active session cookie
-  const isAuthenticated = request.cookies.has('rk-auth-session');
+export async function middleware(request: NextRequest) {
+  // Extract and verify the JWT securely
+  const token = request.cookies.get('rk-auth-session')?.value;
+  const session = await verifySessionToken(token);
+  const isAuthenticated = !!session;
 
   const { pathname } = request.nextUrl;
 
@@ -21,8 +24,18 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // If ANY other page is requested and they are NOT authenticated, force them to Login!
-  if (!isAuthenticated) {
+  // Secure Admin Routes 
+  if (pathname.startsWith('/admin')) {
+    if (!isAuthenticated) return NextResponse.redirect(new URL('/login', request.url));
+    if (session?.role !== "ADMIN") {
+      // Unauthorized, send back to home
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+    return NextResponse.next();
+  }
+
+  // If ANY other user page is requested and they are NOT authenticated, force them to Login!
+  if (!isAuthenticated && !pathname.includes('/public')) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 

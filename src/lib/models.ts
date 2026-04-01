@@ -8,6 +8,8 @@ const UserSchema = new Schema({
   role: { type: String, enum: ["STUDENT", "ADMIN"], default: "STUDENT" },
   createdAt: { type: Date, default: Date.now },
   wishlist: [{ type: String }], // University IDs
+  resetToken: { type: String },
+  resetTokenExpiry: { type: Date },
 });
 
 export const User = models.User || model("User", UserSchema);
