@@ -38,7 +38,7 @@ export default function RootLayout({
                 <a href="/compare" className="hover:text-primary transition-colors">Compare</a>
                 <a href="/scholarships" className="hover:text-primary transition-colors">Scholarships</a>
                 <a href="/visa" className="hover:text-primary transition-colors">Visa Guide</a>
-                <a href="/booking" className="hover:text-primary transition-colors">Book Counselor</a>
+                <a href="/booking" className="hover:text-primary transition-colors">Bookings</a>
                 <a href="/tools" className="hover:text-primary transition-colors">Tools</a>
                 <a href="/blog" className="hover:text-primary transition-colors">Blog</a>
                 <a href="/success-stories" className="hover:text-primary transition-colors">Stories</a>

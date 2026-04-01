@@ -22,7 +22,7 @@ const navItems = [
   { icon: Heart, label: "My Wishlist", href: "/dashboard#wishlist" },
   { icon: Award, label: "Scholarships", href: "/scholarships" },
   { icon: MapPin, label: "Visa Guide", href: "/visa" },
-  { icon: Calendar, label: "Book Counselor", href: "/booking" },
+  { icon: Calendar, label: "Bookings", href: "/booking" },
   { icon: TrendingUp, label: "Smart Tools", href: "/tools" },
   { icon: FileText, label: "Blog", href: "/blog" },
   { icon: Users, label: "Success Stories", href: "/success-stories" },
@@ -150,7 +150,7 @@ export default function DashboardPage() {
           {[
             { label: "Find Scholarships", href: "/scholarships", icon: Award, color: "bg-amber-500" },
             { label: "Check Visa Guide", href: "/visa", icon: MapPin, color: "bg-green-600" },
-            { label: "Book Counselor", href: "/booking", icon: Calendar, color: "bg-primary" },
+            { label: "Bookings", href: "/booking", icon: Calendar, color: "bg-primary" },
             { label: "ROI Calculator", href: "/tools", icon: TrendingUp, color: "bg-purple-600" },
           ].map(({ label, href, icon: Icon, color }) => (
             <Link key={href} href={href}

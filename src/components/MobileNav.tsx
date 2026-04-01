@@ -9,7 +9,7 @@ const navLinks = [
   { href: "/compare", label: "Compare" },
   { href: "/scholarships", label: "Scholarships" },
   { href: "/visa", label: "Visa Guide" },
-  { href: "/booking", label: "Book Counselor" },
+  { href: "/booking", label: "Bookings" },
   { href: "/tools", label: "Tools" },
   { href: "/blog", label: "Blog" },
   { href: "/success-stories", label: "Stories" },

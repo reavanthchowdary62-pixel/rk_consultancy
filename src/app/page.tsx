@@ -85,6 +85,12 @@ export default function Home() {
           Compare QS 2026 ranked universities worldwide, calculate ROI, and book verified counselor sessions — all in one premium platform.
         </p>
 
+        <div className="flex items-center justify-center mb-10 relative z-10">
+          <Link href="/booking" className="bg-gradient-to-r from-primary to-blue-600 hover:from-blue-600 hover:to-primary text-white font-extrabold py-4 px-10 rounded-2xl shadow-[0_10px_30px_rgba(37,99,235,0.3)] transition-all hover:scale-105 hover:-translate-y-1 text-lg flex items-center gap-2 animate-bounce-slow">
+            📅 Go to Bookings Section
+          </Link>
+        </div>
+
         {/* ─── SEARCH BAR ─── */}
         <form onSubmit={handleSearch}
           className="w-full max-w-4xl mx-auto bg-white dark:bg-slate-900 backdrop-blur-xl border border-gray-200 dark:border-gray-700 rounded-2xl shadow-2xl p-3 md:p-4 flex flex-col md:flex-row gap-3 relative z-10">
@@ -235,7 +241,7 @@ export default function Home() {
             { label: "Scholarship Finder", href: "/scholarships", emoji: "🎓" },
             { label: "Visa Guide", href: "/visa", emoji: "🗺️" },
             { label: "Smart Tools", href: "/tools", emoji: "🛠️" },
-            { label: "Book Counselor", href: "/booking", emoji: "📅" },
+            { label: "Bookings", href: "/booking", emoji: "📅" },
           ].map(({ label, href, emoji }) => (
             <Link key={href} href={href}
               className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-gray-100 dark:border-gray-700 hover:shadow-lg hover:border-primary/30 transition-all group text-center">
