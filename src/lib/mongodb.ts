@@ -1,8 +1,10 @@
 import mongoose from "mongoose";
 import dns from "dns";
 
-// Force Google DNS for SRV resolution (fixes ISP DNS issues with MongoDB Atlas)
-dns.setServers(["8.8.8.8", "8.8.4.4"]);
+// Force Google DNS locally only (fixes local ISP DNS issues). Vercel blocks this in production.
+if (process.env.NODE_ENV === 'development') {
+  dns.setServers(["8.8.8.8", "8.8.4.4"]);
+}
 
 const MONGODB_URI = process.env.MONGODB_URI || "";
 
