@@ -23,7 +23,14 @@ export async function connectDB() {
 
   if (!cached.promise) {
     cached.promise = mongoose
-      .connect(MONGODB_URI, { bufferCommands: false })
+      .connect(MONGODB_URI, { 
+        bufferCommands: false,
+        serverApi: {
+          version: '1',
+          strict: true,
+          deprecationErrors: true,
+        }
+      })
       .then((m) => m)
       .catch((err) => {
         cached.promise = null;
