@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  password  String
+  name      String
+  role      String    @default("STUDENT") // STUDENT, ADMIN
+  bookings  Booking[]
+}
+
+model University {
+  id             String   @id @default(uuid())
+  name           String
+  address        String
+  country        String
+  qsRank2026     Int
+  tuitionFeeINR  Int
+  level          String   // UG, PG, BOTH
+  courseAreas    String[] // e.g., ["Computer Science", "Biotechnology", "MBA"]
+  admissionReqs  String 
+  placementPcnt  Float
+  avgSalaryINR   Int
+  locationScore  Float    // Suitability for Indian students (out of 10, considering visa/community)
+}
+
+model Agent {
+  id          String    @id @default(uuid())
+  name        String
+  region      String    // e.g., "Rajkot"
+  specialty   String    // e.g., "Engineering", "USA"
+  calendlyUrl String
+  bookings    Booking[]
+}
+
+model Booking {
+  id        String   @id @default(uuid())
+  userId    String
+  agentId   String
+  dateTime  DateTime
+  status    String   // PENDING, CONFIRMED
+  user      User     @relation(fields: [userId], references: [id])
+  agent     Agent    @relation(fields: [agentId], references: [id])
+}
