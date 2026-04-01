@@ -8,9 +8,12 @@ import { LogoutButton } from "@/components/LogoutButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationBell } from "@/components/NotificationBell";
 import { WishlistProvider } from "@/contexts/WishlistContext";
+import { MobileNav } from "@/components/MobileNav";
+
 export const metadata: Metadata = {
-  title: "RK Consultancy | Best University Finder & Chatbot",
-  description: "Find the best universities globally or in India for your course and budget. AI counseling available.",
+  title: "RK Consultancy | Premier Global Education Counselor",
+  description: "Compare QS 2026 ranked universities, calculate ROI, find scholarships, and book expert counseling sessions. Trusted by 10,000+ Indian students.",
+  keywords: "study abroad, university rankings, QS 2026, Indian students, MBA abroad, scholarships, visa guide",
 };
 
 export default function RootLayout({
@@ -44,8 +47,9 @@ export default function RootLayout({
               <div className="flex items-center gap-2">
                 <ThemeToggle />
                 <NotificationBell />
-                <a href="/dashboard" className="bg-primary/10 text-primary text-xs font-bold px-3 py-1.5 rounded-full hover:bg-primary/20 transition-colors">Dashboard</a>
+                <a href="/dashboard" className="hidden md:inline-flex bg-primary/10 text-primary text-xs font-bold px-3 py-1.5 rounded-full hover:bg-primary/20 transition-colors">Dashboard</a>
                 <LogoutButton />
+                <MobileNav />
               </div>
             </div>
           </header>

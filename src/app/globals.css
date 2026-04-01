@@ -14,6 +14,10 @@
   --background-rgb: 15, 23, 42;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 * {
   transition-property: background-color, border-color, color;
   transition-duration: 200ms;
@@ -48,6 +52,33 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes fade-in-scale {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
 .animate-fade-in-up {
   animation: fade-in 0.5s ease forwards;
 }
+
+.animate-fade-in-scale {
+  animation: fade-in-scale 0.4s ease forwards;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #64748b; }
+.dark ::-webkit-scrollbar-thumb { background: #475569; }
