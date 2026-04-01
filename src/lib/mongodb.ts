@@ -27,12 +27,6 @@ export async function connectDB() {
     cached.promise = mongoose
       .connect(MONGODB_URI, { 
         bufferCommands: false,
-        serverSelectionTimeoutMS: 5000,
-        serverApi: {
-          version: '1',
-          strict: true,
-          deprecationErrors: true,
-        }
       })
       .then((m) => m)
       .catch((err) => {
