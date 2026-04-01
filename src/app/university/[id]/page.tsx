@@ -1,5 +1,7 @@
 import { MapPin, Navigation, IndianRupee, Trophy, GraduationCap, Building } from "lucide-react";
 import seedData from "@/data/seed.json";
+import { WishlistButton } from "@/components/WishlistButton";
+import { ApplicationModal } from "@/components/ApplicationModal";
 
 export default function UniversityDetailPage({ params }: { params: { id: string } }) {
   const uni = seedData.find((u) => u.id === params.id);
@@ -32,7 +34,12 @@ export default function UniversityDetailPage({ params }: { params: { id: string 
               {uni.level} Level
             </span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-2 shadow-sm">{uni.name}</h1>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-2 shadow-sm flex items-center gap-4">
+            {uni.name}
+            <div className="bg-white/20 backdrop-blur-md rounded-full mt-1">
+              <WishlistButton id={uni.id} name={uni.name} />
+            </div>
+          </h1>
           <p className="text-gray-300 font-medium flex items-center text-sm md:text-base max-w-2xl">
             <MapPin size={18} className="mr-2 text-primary" /> {uni.address}, {uni.country}
           </p>
@@ -90,9 +97,7 @@ export default function UniversityDetailPage({ params }: { params: { id: string 
                 <p className="text-xs text-gray-500 uppercase font-bold mb-1">Requirements</p>
                 <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{uni.admissionReqs}</p>
               </div>
-              <button className="w-full mt-4 bg-primary hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition-transform transform hover:-translate-y-0.5">
-                Start Application Process
-              </button>
+              <ApplicationModal uni={uni} />
               <p className="text-xs text-center text-gray-500 mt-2 font-medium">RK Consultancy guarantees priority processing.</p>
             </div>
           </div>

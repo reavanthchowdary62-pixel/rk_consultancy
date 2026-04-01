@@ -49,3 +49,20 @@ const SavedUniversitySchema = new Schema({
 
 SavedUniversitySchema.index({ userEmail: 1, universityId: 1 }, { unique: true });
 export const SavedUniversity = models.SavedUniversity || model("SavedUniversity", SavedUniversitySchema);
+
+// ─── University Application Model ───────────────────────────────────────────
+const ApplicationSchema = new Schema({
+  userEmail: { type: String, required: true },
+  universityId: { type: String, required: true },
+  universityName: { type: String, required: true },
+  country: { type: String },
+  city: { type: String },
+  intendedCourse: { type: String, required: true }, // Chosen from university's available courses
+  pastEducation: { type: String, required: true }, // High School, Bachelor's, etc.
+  pastAcademicScore: { type: String, required: true }, // e.g., 85% or 8.5 CGPA
+  phone: { type: String, required: true },
+  status: { type: String, enum: ["PENDING", "REVIEWING", "ACCEPTED", "REJECTED"], default: "PENDING" },
+  createdAt: { type: Date, default: Date.now },
+});
+
+export const Application = models.Application || model("Application", ApplicationSchema);
