@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ChatBox } from "@/components/ChatBox";
 import { GraduationCap } from "lucide-react";
@@ -10,10 +10,24 @@ import { NotificationBell } from "@/components/NotificationBell";
 import { WishlistProvider } from "@/contexts/WishlistContext";
 import { MobileNav } from "@/components/MobileNav";
 
+export const viewport: Viewport = {
+  themeColor: "#1e3a8a",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 export const metadata: Metadata = {
   title: "RK Consultancy | Premier Global Education Counselor",
   description: "Compare QS 2026 ranked universities, calculate ROI, find scholarships, and book expert counseling sessions. Trusted by 10,000+ Indian students.",
   keywords: "study abroad, university rankings, QS 2026, Indian students, MBA abroad, scholarships, visa guide",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "RK Consult",
+  },
+  applicationName: "RK Consultancy",
 };
 
 export default function RootLayout({
