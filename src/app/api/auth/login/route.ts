@@ -36,9 +36,11 @@ export async function POST(req: Request) {
 
     // Try MongoDB first, fall back to mock auth if DB not configured
     const db = await connectDB();
+    if (!db) {
+      return NextResponse.json({ error: "MONGODB_OFFLINE: Please check your Atlas Network Access (IP Whitelist 0.0.0.0/0) or verify your connection string." }, { status: 500 });
+    }
 
-    if (db) {
-      // ── REAL MongoDB Authentication ──────────────────────────
+    // ── REAL MongoDB Authentication ──────────────────────────
       if (action === "signup") {
         // Check if user already exists
         const existing = await User.findOne({ email: email.toLowerCase() });
@@ -65,21 +67,11 @@ export async function POST(req: Request) {
         }
         console.log(`✅ User login: ${user.email}`);
       }
-    } else {
-      // ── FALLBACK: Mock authentication (no DB needed) ──────────
-      console.log("ℹ️  Using mock auth (MONGODB_URI not set). Any credentials accepted.");
-    }
-
     let sessionToken = "";
     
-    // If DB connects, sign real context. If mock fallback, just sign a fake context.
-    if (db) {
-      const user = await User.findOne({ email: email.toLowerCase() });
-      if (user) {
-        sessionToken = await createSessionToken({ id: user._id.toString(), email: user.email, role: user.role });
-      }
-    } else {
-      sessionToken = await createSessionToken({ id: "mock-id", email, role: "STUDENT" });
+    const user = await User.findOne({ email: validData.email.toLowerCase() });
+    if (user) {
+      sessionToken = await createSessionToken({ id: user._id.toString(), email: user.email, role: user.role });
     }
 
     if (!sessionToken) {

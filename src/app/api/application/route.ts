@@ -31,7 +31,10 @@ export async function POST(req: Request) {
     // Zod parsing strips malicious HTML and enforces lengths
     const validData = applicationSchema.parse(body);
 
-    await connectDB();
+    const db = await connectDB();
+    if (!db) {
+      return NextResponse.json({ error: "MONGODB_OFFLINE: Please check your Atlas Network Access (IP Whitelist 0.0.0.0/0) or verify your connection string." }, { status: 500 });
+    }
 
     // Check if application already exists to prevent duplicates
     const existing = await Application.findOne({ userEmail: session.email, universityId: validData.universityId, intendedCourse: validData.intendedCourse });
