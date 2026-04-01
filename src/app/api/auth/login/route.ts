@@ -4,6 +4,8 @@ import { User } from "@/lib/models";
 import bcrypt from "bcryptjs";
 import { createSessionToken } from "@/lib/auth";
 import { rateLimit } from "@/lib/rateLimit";
+import { z } from "zod";
+
 export async function POST(req: Request) {
   try {
     // RATE LIMITING PROTECTION: Stop brute force password guessing (max 5 tries per minute)
@@ -13,11 +15,24 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Too many login attempts. Please try again later." }, { status: 429 });
     }
 
-    const { email, password, name, action } = await req.json();
-
-    if (!email || !password) {
-      return NextResponse.json({ error: "Email and password are required" }, { status: 400 });
+    const body = await req.json();
+    
+    // ZOD SANITIZATION: Prevents Bcrypt DoS (max 72 chars) and NoSQL Crashes
+    const authSchema = z.object({
+      email: z.string().email(),
+      password: z.string().min(6).max(72),
+      name: z.string().max(100).optional(),
+      action: z.string().optional()
+    });
+    
+    let validData;
+    try {
+      validData = authSchema.parse(body);
+    } catch (zError: any) {
+      return NextResponse.json({ error: "Invalid login payload format." }, { status: 400 });
     }
+
+    const { email, password, name, action } = validData;
 
     // Try MongoDB first, fall back to mock auth if DB not configured
     const db = await connectDB();
@@ -87,6 +102,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error("Auth error:", error.message);
-    return NextResponse.json({ error: "Authentication failed. Please try again." }, { status: 500 });
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

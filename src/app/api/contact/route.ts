@@ -53,6 +53,7 @@ export async function GET() {
     const messages = await ContactMessage.find().sort({ createdAt: -1 }).limit(100);
     return NextResponse.json({ messages });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Contact GET error:", error.message);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

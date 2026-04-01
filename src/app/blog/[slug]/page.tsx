@@ -2,6 +2,7 @@ import { articles } from "@/data/articles";
 import { notFound } from "next/navigation";
 import { Clock, ArrowLeft, Tag } from "lucide-react";
 import Link from "next/link";
+import DOMPurify from 'isomorphic-dompurify';
 
 const fullContent: Record<string, string> = {
   "top-5-germany-cs": `Germany is one of the best-kept secrets for Indian CS students. With almost zero tuition at public universities, a thriving tech sector, and a post-study work visa lasting 18 months, Germany offers extraordinary value.
@@ -147,7 +148,8 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
         return <li key={i} className="text-gray-600 dark:text-gray-400 mb-1 ml-4">{clean}</li>;
       }
       const rendered = line.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-      return line.trim() ? <p key={i} className="text-gray-600 dark:text-gray-400 leading-relaxed mb-3" dangerouslySetInnerHTML={{ __html: rendered }}></p> : <br key={i} />;
+      const safeHtml = DOMPurify.sanitize(rendered);
+      return line.trim() ? <p key={i} className="text-gray-600 dark:text-gray-400 leading-relaxed mb-3" dangerouslySetInnerHTML={{ __html: safeHtml }}></p> : <br key={i} />;
     });
   };
 

@@ -13,6 +13,7 @@
     "ai": "^2.2.37",
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.3.1",
+    "isomorphic-dompurify": "^3.7.1",
     "jose": "^6.2.2",
     "lucide-react": "^0.344.0",
     "mongoose": "^9.3.3",

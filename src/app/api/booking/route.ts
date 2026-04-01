@@ -65,6 +65,7 @@ export async function GET() {
     const bookings = await Booking.find().sort({ createdAt: -1 }).limit(50);
     return NextResponse.json({ bookings });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Booking error:", error.message);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

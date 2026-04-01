@@ -50,6 +50,8 @@ export function ApplicationModal({ uni }: { uni: UniProps }) {
       const data = await res.json();
       if (res.ok) {
         setSuccess(true);
+      } else if (res.status === 401) {
+        setError("You are not logged in. Please sign in or register to submit applications.");
       } else {
         setError(data.error || "Failed to submit application.");
       }
@@ -109,9 +111,16 @@ export function ApplicationModal({ uni }: { uni: UniProps }) {
                 </div>
 
                 {error && (
-                  <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl flex items-start gap-3">
-                    <AlertCircle size={18} className="text-red-500 flex-shrink-0 mt-0.5" />
-                    <p className="text-red-700 dark:text-red-300 font-semibold text-sm">{error}</p>
+                  <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl flex flex-col gap-2 animate-fade-in-up">
+                    <div className="flex items-start gap-3">
+                      <AlertCircle size={18} className="text-red-500 flex-shrink-0 mt-0.5" />
+                      <p className="text-red-700 dark:text-red-300 font-semibold text-sm">{error}</p>
+                    </div>
+                    {error.includes("sign in") && (
+                      <a href="/login" className="ml-7 text-xs font-bold bg-white dark:bg-slate-800 px-3 py-1.5 rounded text-primary hover:text-blue-700 w-fit border border-gray-200 dark:border-gray-700 shadow-sm transition">
+                        Go to Login Page →
+                      </a>
+                    )}
                   </div>
                 )}
 

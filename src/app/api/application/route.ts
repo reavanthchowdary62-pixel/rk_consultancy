@@ -48,9 +48,11 @@ export async function POST(req: Request) {
 
   } catch (error: any) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: "Invalid payload data" }, { status: 400 });
+      const zErr = error as z.ZodError;
+      const messages = zErr.errors.map((e: any) => `${e.path.join('.')}: ${e.message}`).join(", ");
+      return NextResponse.json({ error: `Validation failed - ${messages}` }, { status: 400 });
     }
     console.error("Application API Error:", error.message);
-    return NextResponse.json({ error: "Failed to submit application" }, { status: 500 });
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
