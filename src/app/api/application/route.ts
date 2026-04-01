@@ -48,8 +48,7 @@ export async function POST(req: Request) {
 
   } catch (error: any) {
     if (error instanceof z.ZodError) {
-      const zErr = error as z.ZodError;
-      const messages = zErr.errors.map((e: any) => `${e.path.join('.')}: ${e.message}`).join(", ");
+      const messages = (error as any).errors.map((e: any) => `${e.path.join('.')}: ${e.message}`).join(", ");
       return NextResponse.json({ error: `Validation failed - ${messages}` }, { status: 400 });
     }
     console.error("Application API Error:", error.message);
