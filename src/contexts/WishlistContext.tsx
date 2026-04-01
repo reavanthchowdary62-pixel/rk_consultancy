@@ -18,8 +18,17 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   const [wishlist, setWishlist] = useState<string[]>([]);
 
   useEffect(() => {
-    const stored = localStorage.getItem("rk-wishlist");
-    if (stored) setWishlist(JSON.parse(stored));
+    try {
+      const stored = localStorage.getItem("rk-wishlist");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          setWishlist(parsed);
+        }
+      }
+    } catch (e) {
+      console.error("Failed to parse wishlist from storage", e);
+    }
   }, []);
 
   const toggle = (id: string) => {

@@ -35,9 +35,9 @@ export default function DashboardPage() {
   const topUnis = seedData.slice(0, 4);
 
   return (
-    <div className="flex -mx-6 -mt-6 min-h-[calc(100vh-4rem)]">
+    <div className="flex -mx-6 -mt-6 h-[calc(100vh-4rem)] overflow-hidden">
       {/* Sidebar */}
-      <aside className="hidden lg:flex flex-col w-64 shrink-0 bg-slate-900 text-white border-r border-slate-800 min-h-full px-4 py-8">
+      <aside className="hidden lg:flex flex-col w-64 shrink-0 bg-slate-900 text-white border-r border-slate-800 h-full overflow-y-auto px-4 py-8">
         <div className="flex items-center gap-2 mb-10 px-2">
           <GraduationCap size={28} className="text-secondary shrink-0" />
           <span className="font-extrabold text-lg tracking-tight">RK Consultancy</span>
