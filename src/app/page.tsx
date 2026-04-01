@@ -48,7 +48,7 @@ export default function Home() {
   const topUniversities = [
     { name: "MIT", country: "USA", rank: 1, image: "https://images.unsplash.com/photo-1564981797816-1043664bf78d?auto=format&fit=crop&w=400&h=250&q=80", fee: "45L" },
     { name: "University of Oxford", country: "UK", rank: 3, image: "https://images.unsplash.com/photo-1580137189272-c9379f8864fd?auto=format&fit=crop&w=400&h=250&q=80", fee: "38L" },
-    { name: "Stanford University", country: "USA", rank: 4, image: "https://images.unsplash.com/photo-1584697964190-7383dcee8d44?auto=format&fit=crop&w=400&h=250&q=80", fee: "48L" },
+    { name: "Stanford University", country: "USA", rank: 4, image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=400&h=250&q=80", fee: "48L" },
     { name: "IIT Bombay", country: "India", rank: 118, image: "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=400&h=250&q=80", fee: "2.5L" },
   ];
 
