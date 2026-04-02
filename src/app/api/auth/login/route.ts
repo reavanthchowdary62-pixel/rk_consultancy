@@ -7,8 +7,6 @@ import { rateLimit } from "@/lib/rateLimit";
 import { z } from "zod";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(req: Request) {
   try {
     // RATE LIMITING PROTECTION: Stop brute force password guessing (max 5 tries per minute)
@@ -69,9 +67,10 @@ export async function POST(req: Request) {
         
         if (process.env.RESEND_API_KEY) {
           try {
+            const resend = new Resend(process.env.RESEND_API_KEY);
             await resend.emails.send({
               from: 'RK Consultancy <onboarding@resend.dev>',
-              to: email, // Note: On free Resend tiers with no custom domain, you can only send to your own registered email
+              to: email, 
               subject: '🔗 Verify your RK Consultancy Account',
               html: `
                 <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
@@ -116,7 +115,6 @@ export async function POST(req: Request) {
     }
 
     // Set secure session cookie (7 days)
-    // Importing cookies dynamically to avoid edge conflicts
     const { cookies } = await import("next/headers");
     cookies().set({
       name: "rk-auth-session",
