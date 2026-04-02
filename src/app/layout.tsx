@@ -9,6 +9,8 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationBell } from "@/components/NotificationBell";
 import { WishlistProvider } from "@/contexts/WishlistContext";
 import { MobileNav } from "@/components/MobileNav";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const viewport: Viewport = {
   themeColor: "#1e3a8a",
@@ -100,6 +102,8 @@ export default function RootLayout({
         )}
 
         </WishlistProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

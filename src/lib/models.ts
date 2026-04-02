@@ -8,6 +8,8 @@ const UserSchema = new Schema({
   role: { type: String, enum: ["STUDENT", "ADMIN"], default: "STUDENT" },
   createdAt: { type: Date, default: Date.now },
   wishlist: [{ type: String }], // University IDs
+  isVerified: { type: Boolean, default: false },
+  verificationToken: { type: String },
   resetToken: { type: String },
   resetTokenExpiry: { type: Date },
 });

@@ -5,6 +5,9 @@ import bcrypt from "bcryptjs";
 import { createSessionToken } from "@/lib/auth";
 import { rateLimit } from "@/lib/rateLimit";
 import { z } from "zod";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: Request) {
   try {
@@ -49,12 +52,46 @@ export async function POST(req: Request) {
         }
         // Hash password and create user
         const hashed = await bcrypt.hash(password, 12);
+        
+        // EMAIL VERIFICATION PREP: Generate a unique hex token
+        const verificationToken = Buffer.from(email + Date.now().toString()).toString('hex');
+        const verificationLink = `https://rk-consultancy.vercel.app/api/auth/verify?token=${verificationToken}`;
+        
         const newUser = await User.create({
           name: name || email.split("@")[0],
           email: email.toLowerCase(),
           password: hashed,
+          isVerified: false,
+          verificationToken: verificationToken
         });
+        
         console.log(`✅ New user registered: ${newUser.email}`);
+        
+        if (process.env.RESEND_API_KEY) {
+          try {
+            await resend.emails.send({
+              from: 'RK Consultancy <onboarding@resend.dev>',
+              to: email, // Note: On free Resend tiers with no custom domain, you can only send to your own registered email
+              subject: '🔗 Verify your RK Consultancy Account',
+              html: `
+                <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
+                  <h2>Welcome to RK Consultancy, ${newUser.name}!</h2>
+                  <p>We are thrilled to help you on your global education journey.</p>
+                  <p>Please safely verify your email address by clicking the secure link below:</p>
+                  <a href="${verificationLink}" style="display: inline-block; padding: 12px 24px; background-color: #1e3a8a; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 10px;">Verify My Account</a>
+                  <p style="margin-top: 30px; font-size: 12px; color: #888;">If you didn't request this, you can safely ignore this email.</p>
+                </div>
+              `
+            });
+            console.log(`📧 Live verification email dispatched securely via Resend!`);
+          } catch (error) {
+            console.error("Resend API failed to dispatch email:", error);
+          }
+        } else {
+          console.log(`📧 [SIMULATED EMAIL] Sending verification link to ${newUser.email}...`);
+          console.log(`🔗 Link: ${verificationLink}`);
+        }
+        
       } else {
         // Login - verify credentials
         const user = await User.findOne({ email: email.toLowerCase() });
