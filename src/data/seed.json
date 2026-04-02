@@ -669,6 +669,38 @@
     "imageUrl": "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&q=80&w=800&h=500"
   },
   {
+    "id": "mu-rajkot-1",
+    "name": "Marwadi University",
+    "address": "Rajkot-Morbi Highway, Rajkot, Gujarat 360003",
+    "country": "India",
+    "qsRank2026": 551,
+    "tuitionFeeINR": 180000,
+    "level": "BOTH",
+    "courseAreas": [
+      "Computer Science",
+      "Artificial Intelligence",
+      "Data Science",
+      "Mechanical Engineering",
+      "Civil Engineering",
+      "Electrical Engineering",
+      "Electronics & Communication",
+      "Information Technology",
+      "MBA",
+      "Pharmacy",
+      "Biotechnology",
+      "Cloud Computing",
+      "Cyber Security",
+      "Robotics",
+      "Finance",
+      "Management"
+    ],
+    "admissionReqs": "10+2 with minimum 50%, GUJCET/JEE scores, Merit-based Admission",
+    "placementPcnt": 82,
+    "avgSalaryINR": 480000,
+    "locationScore": 7.5,
+    "imageUrl": "/images/marwadi-university.png"
+  },
+  {
     "id": "un-6f5zwjbhe",
     "name": "Houston Global Campus",
     "address": "2406 University Ave, Houston",
