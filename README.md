@@ -1,48 +1,70 @@
-# StudyManager
+# 🎓 RK Consultancy: Global Education Platform
 
-StudyManager is a full-stack educational platform built with Next.js 14, Tailwind CSS, Prisma, and the Vercel AI SDK. It helps students (specifically from India/Gujarat) find and compare domestic and global universities, chat with an AI counselor, and book agent meetings.
+An enterprise-grade consultancy platform designed for Indian study-abroad aspirants. Built with **Next.js 14**, **Tailwind CSS**, and **MongoDB Atlas**, it offers a seamless experience from university comparison to enrollment.
 
-## Requirements
+🔗 **Live Application:** [rk-consultancy.vercel.app](https://rk-consultancy.vercel.app)
 
-- **Node.js**: v18.17+
-- **Database**: PostgreSQL (Prisma configured) / or change provider in `schema.prisma` to sqlite for immediate local testing if desired.
+---
 
-## Setup Instructions
+## 🛡️ Enterprise Security & Architecture
 
-1. **Install Dependencies**
-   Navigate to the project root and install NPM packages:
+The application is built to high architectural standards (9/10 Audit Rating):
+
+- **Secure Authentication:** JWT-based session management using `jose` and `bcryptjs` for military-grade password hashing.
+- **Bot & Brute-Force Defense:** Custom **IP-based Rate Limiting** on all Auth API routes (Middleware-managed).
+- **Email Verification:** Live transactional email pipeline using the **Resend SDK** for account activation.
+- **NoSQL Injection Protection:** Aggressive data sanitization and schema validation via **Zod**.
+- **Data Integrity:** Mongoose-driven models with unique constraints and verification states.
+
+## 🚀 Key Features
+
+- **QS 2026 Comparison Engine:** Real-time search and comparison across 200+ global universities.
+- **Smart Scholarship Finder:** Automated eligibility matching for premium scholarships.
+- **Visa Information Hub:** Country-specific guides for USA, UK, Canada, Australia, and Germany.
+- **Mobile Native PWA:** Full Service Worker integration for a natively installable mobile experience.
+- **Enterprise Telemetry:** Built-in Vercel Analytics and Speed Insights for real-time monitoring.
+
+## 💻 Tech Stack
+
+- **Framework:** [Next.js 14 (App Router)](https://nextjs.org/)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **Database:** [MongoDB Atlas](https://www.mongodb.com/atlas) with Mongoose
+- **Email:** [Resend](https://resend.com/)
+- **Icons:** [Lucide React](https://lucide.dev/)
+- **Deployment:** [Vercel Edge Network](https://vercel.com/)
+
+---
+
+## 🛠️ Local Development
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/reavanthchowdary62-pixel/rk_consultancy.git
+   ```
+
+2. **Install dependencies:**
    ```bash
    npm install
    ```
-   *(Note: This project strictly utilizes Next.js App Router and doesn't require a separate Express server container as originally scoped, bringing better Vercel performance and DX).*
 
-2. **Environment Variables**
-   Create a `.env` file in the root directory:
+3. **Set up Environment Variables:**
+   Create a `.env.local` file with:
    ```env
-   # PostgreSQL connection string for Prisma
-   DATABASE_URL="postgresql://user:password@localhost:5432/studymanager?schema=public"
-
-   # OpenAI Key for the StudyBot chatbot / Vercel AI SDK
-   OPENAI_API_KEY="sk-..."
+   MONGODB_URI=your_mongodb_uri
+   JWT_SECRET=your_jwt_secret
+   RESEND_API_KEY=your_resend_key
    ```
 
-3. **Database Initialization**
-   Run the Prisma migrations to create the schema, then generate the client:
-   ```bash
-   npx prisma migrate dev --name init
-   npx prisma generate
-   ```
-
-4. **Run Development Server**
-   Start the application locally:
+4. **Run the development server:**
    ```bash
    npm run dev
    ```
-   Open `http://localhost:3000` in your browser.
 
-## Technical Scope Delivered
+---
 
-- **Frontend**: Responsive, modern, mobile-first design leveraging Tailwind CSS. English interfaces with built-in layout readiness for i18n setup.
-- **Backend/API**: `app/api/compare` for retrieving unified JSON. `app/api/chat` for maintaining edge-socket streaming with OpenAI models.
-- **Database**: Seeded `src/data/seed.json` for rapid localized mock data without needing Postgres running locally. 
-- **AI Integration**: Edge ready endpoint returning `StreamingTextResponse` hooked seamlessly into the UI via `ChatBox`.
+## ⚖️ Legal & Compliance
+
+- **Privacy Policy:** [View `/privacy`](https://rk-consultancy.vercel.app/privacy)
+- **Terms of Service:** [View `/terms`](https://rk-consultancy.vercel.app/terms)
+
+*Designed & Developed by RK Consultancy Team.*
