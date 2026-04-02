@@ -10,12 +10,19 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  // Allow access to the login page and Next.js static assets/APIs without a token
+  // Allow access to the login page, static assets, APIs, and public informational pages
   if (
     pathname.startsWith('/_next') ||
     pathname.includes('/favicon.ico') ||
+    pathname.includes('/public') ||
     pathname.startsWith('/api/') ||
-    pathname === '/login'
+    pathname === '/login' ||
+    pathname === '/' ||
+    pathname === '/privacy' ||
+    pathname === '/terms' ||
+    pathname === '/blog' ||
+    pathname === '/success-stories' ||
+    pathname === '/scholars'
   ) {
     // If they are authenticated and trying to access /login, redirect them silently to Home
     if (isAuthenticated && pathname === '/login') {
