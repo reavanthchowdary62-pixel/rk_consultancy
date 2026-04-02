@@ -9,9 +9,9 @@ import { Resend } from "resend";
 
 export async function POST(req: Request) {
   try {
-    // RATE LIMITING PROTECTION: Stop brute force password guessing (max 5 tries per minute)
+    // RATE LIMITING: Uses Upstash Redis (global) or in-memory fallback
     const ip = req.headers.get('x-forwarded-for') || "127.0.0.1";
-    const allowed = rateLimit(ip, 5, 60 * 1000);
+    const allowed = await rateLimit(ip, 5, 60 * 1000);
     if (!allowed) {
       return NextResponse.json({ error: "Too many login attempts. Please try again later." }, { status: 429 });
     }
