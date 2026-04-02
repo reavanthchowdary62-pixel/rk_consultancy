@@ -23,7 +23,7 @@ export default function SuccessStoriesPage() {
     <div className="py-10 px-4 max-w-6xl mx-auto">
       <div className="text-center mb-14">
         <h1 className="text-5xl font-extrabold text-gray-900 dark:text-white mb-4">Student <span className="text-secondary">Success Stories</span></h1>
-        <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">Real students. Real universities. Real results. Here's how RK Consultancy transformed their futures.</p>
+        <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">Real students. Real universities. Real results. Here&apos;s how RK Consultancy transformed their futures.</p>
       </div>
 
       {/* Stats Banner */}

@@ -27,7 +27,7 @@ export default function TermsOfServicePage() {
         <section>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">3. Intellectual Property</h2>
           <p className="text-gray-600 dark:text-gray-400 leading-relaxed max-w-prose mt-2">
-            The platform's original content, features, and functionality are owned by RK Consultancy and are protected by international copyright, trademark, patent, trade secret, and other intellectual property laws.
+            The platform&apos;s original content, features, and functionality are owned by RK Consultancy and are protected by international copyright, trademark, patent, trade secret, and other intellectual property laws.
           </p>
         </section>
 

@@ -120,7 +120,7 @@ export default function VisaPage() {
 
           <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-4">
             <p className="text-xs font-bold text-amber-700 dark:text-amber-400 flex items-center gap-1.5 mb-1"><AlertCircle size={14} /> Expert Tip</p>
-            <p className="text-xs text-amber-700 dark:text-amber-300">RK Consultancy's visa specialists handle your complete application end-to-end. <a href="/booking" className="font-bold underline">Book a session →</a></p>
+            <p className="text-xs text-amber-700 dark:text-amber-300">RK Consultancy&apos;s visa specialists handle your complete application end-to-end. <a href="/booking" className="font-bold underline">Book a session →</a></p>
           </div>
         </div>
       </div>

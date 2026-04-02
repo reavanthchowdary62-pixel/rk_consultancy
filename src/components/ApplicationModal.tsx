@@ -165,8 +165,8 @@ export function ApplicationModal({ uni }: { uni: UniProps }) {
                       >
                         <option value="High School">12th Grade / High School</option>
                         <option value="Associate Degree">Associate Degree / Diploma</option>
-                        <option value="Bachelor's Degree">Bachelor's Degree</option>
-                        <option value="Master's Degree">Master's Degree</option>
+                        <option value="Bachelor's Degree">Bachelor&apos;s Degree</option>
+                        <option value="Master's Degree">Master&apos;s Degree</option>
                       </select>
                     </div>
                     <div className="space-y-1">
