@@ -231,6 +231,12 @@ h1, h2, h3, .font-display {
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 
 /* ── Gradient border ─────────────────────────────────────────────────────── */
+/* ── Hide Vercel Toolbar ─────────────────────────────────────────────────── */
+#vercel-toolbar,
+[data-vercel-toolbar],
+.vercel-live-feedback,
+vercel-live-feedback { display: none !important; }
+
 .gradient-border {
   position: relative;
   border-radius: 16px;
