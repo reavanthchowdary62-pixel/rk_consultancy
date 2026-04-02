@@ -115,7 +115,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           </header>
 
           {/* ── MAIN CONTENT ─────────────────────────────────────────────- */}
-          <main className="flex-grow flex flex-col relative w-full max-w-7xl mx-auto p-4 sm:p-6">
+          <main className="flex-grow flex flex-col relative w-full overflow-x-hidden">
             {children}
           </main>
 

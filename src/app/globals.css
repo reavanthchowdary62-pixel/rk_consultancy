@@ -226,6 +226,10 @@ h1, h2, h3, .font-display {
 .dark .badge-accent  { background: rgba(20,184,166,0.15); color: #5eead4; }
 .dark .badge-amber   { background: rgba(251,191,36,0.15); color: #fcd34d; }
 
+/* ── Hide Scrollbar (horizontal scroll rows) ─────────────────────────────── */
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+
 /* ── Gradient border ─────────────────────────────────────────────────────── */
 .gradient-border {
   position: relative;
