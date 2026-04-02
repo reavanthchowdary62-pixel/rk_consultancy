@@ -67,7 +67,7 @@ export default function BookingPage() {
             <CheckCircle size={40} className="text-green-500" />
           </div>
           <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white mb-2">Session Booked!</h2>
-          <p className="text-gray-500 mb-6">Your video counseling session has been confirmed. You'll receive a calendar invite on <strong>{form.email}</strong>.</p>
+          <p className="text-gray-500 mb-6">Your video counseling session has been confirmed. You&apos;ll receive a calendar invite on <strong>{form.email}</strong>.</p>
           <div className="bg-gray-50 dark:bg-slate-700 rounded-xl p-4 text-left text-sm space-y-2 mb-6">
             <p><strong>Counselor:</strong> {agent?.name}</p>
             <p><strong>Date:</strong> {selectedDay?.toDateString()}</p>

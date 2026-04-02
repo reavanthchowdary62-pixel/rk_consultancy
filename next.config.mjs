@@ -11,7 +11,8 @@ const withPWA = withPWAInit({
 const nextConfig = {
   reactStrictMode: true,
   eslint: {
-    ignoreDuringBuilds: true,
+    // Set to false to ensure all linting errors are caught during build (The Proper Way)
+    ignoreDuringBuilds: false,
   },
   images: {
     remotePatterns: [

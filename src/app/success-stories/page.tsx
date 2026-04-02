@@ -51,7 +51,7 @@ export default function SuccessStoriesPage() {
 
             <blockquote className="text-sm text-gray-600 dark:text-gray-400 italic flex-1 relative pl-4">
               <Quote size={28} className="absolute -top-2 -left-1 text-primary/10 rotate-180" />
-              "{s.quote}"
+              &quot;{s.quote}&quot;
             </blockquote>
 
             <div className="mt-5 pt-4 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">

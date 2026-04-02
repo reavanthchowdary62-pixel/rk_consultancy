@@ -65,7 +65,7 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl font-extrabold text-gray-900 dark:text-white">My Dashboard</h1>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Welcome back! Here's your application overview.</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Welcome back! Here&apos;s your application overview.</p>
           </div>
           <div className="flex items-center gap-3">
             <span className="bg-primary/10 text-primary dark:text-blue-300 text-xs font-bold px-3 py-1.5 rounded-full">STUDENT</span>

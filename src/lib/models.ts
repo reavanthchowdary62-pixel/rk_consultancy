@@ -14,6 +14,8 @@ const UserSchema = new Schema({
   resetTokenExpiry: { type: Date },
 });
 
+UserSchema.index({ email: 1 }, { unique: true });
+
 export const User = models.User || model("User", UserSchema);
 
 // ─── Booking Model ───────────────────────────────────────────────────────────
@@ -28,6 +30,8 @@ const BookingSchema = new Schema({
   status: { type: String, enum: ["PENDING", "CONFIRMED", "CANCELLED"], default: "PENDING" },
   createdAt: { type: Date, default: Date.now },
 });
+
+BookingSchema.index({ email: 1, date: 1 });
 
 export const Booking = models.Booking || model("Booking", BookingSchema);
 

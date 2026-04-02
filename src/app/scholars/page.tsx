@@ -61,7 +61,7 @@ export default function ScholarsPage() {
           Great <span className="text-primary">Scholars</span>
         </h1>
         <p className="text-lg text-gray-600 dark:text-gray-300">
-          At RK Consultancy, we believe that ordinary students can achieve extraordinary global impact. Explore the educational journeys of history's greatest minds to find your inspiration.
+          At RK Consultancy, we believe that ordinary students can achieve extraordinary global impact. Explore the educational journeys of history&apos;s greatest minds to find your inspiration.
         </p>
       </div>
 
