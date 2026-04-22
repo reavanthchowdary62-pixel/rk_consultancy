@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Building, MapPin, CheckCircle, AlertCircle, X, Send } from "lucide-react";
+import { csrfFetch } from "@/lib/csrf";
 
 type UniProps = {
   id: string;
@@ -35,7 +36,7 @@ export function ApplicationModal({ uni }: { uni: UniProps }) {
     setError("");
 
     try {
-      const res = await fetch("/api/application", {
+      const res = await csrfFetch("/api/application", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

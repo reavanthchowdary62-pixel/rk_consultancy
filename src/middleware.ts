@@ -1,56 +1,71 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import { verifySessionToken } from './lib/auth';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-export async function middleware(request: NextRequest) {
-  // Extract and verify the JWT securely
-  const token = request.cookies.get('rk-auth-session')?.value;
-  const session = await verifySessionToken(token);
-  const isAuthenticated = !!session;
+/**
+ * CSRF Protection using the Double-Submit Cookie Pattern:
+ * 1. On every response, set a `csrf-token` cookie (readable by JS, NOT httpOnly)
+ * 2. On mutating requests (POST/PATCH/DELETE), verify that the `x-csrf-token` header matches the cookie
+ * 3. This prevents cross-origin form submissions (attacker can't read the cookie from another domain)
+ */
 
-  const { pathname } = request.nextUrl;
-
-  // Allow access to the login page, static assets, APIs, and public informational pages
-  if (
-    pathname.startsWith('/_next') ||
-    pathname.includes('/favicon.ico') ||
-    pathname.includes('/public') ||
-    pathname.startsWith('/api/') ||
-    pathname === '/login' ||
-    pathname === '/' ||
-    pathname === '/privacy' ||
-    pathname === '/terms' ||
-    pathname === '/blog' ||
-    pathname === '/success-stories' ||
-    pathname === '/scholars'
-  ) {
-    // If they are authenticated and trying to access /login, redirect them silently to Home
-    if (isAuthenticated && pathname === '/login') {
-      return NextResponse.redirect(new URL('/', request.url));
-    }
-    return NextResponse.next();
-  }
-
-  // Secure Admin Routes 
-  if (pathname.startsWith('/admin')) {
-    if (!isAuthenticated) return NextResponse.redirect(new URL('/login', request.url));
-    if (session?.role !== "ADMIN") {
-      // Unauthorized, send back to home
-      return NextResponse.redirect(new URL('/', request.url));
-    }
-    return NextResponse.next();
-  }
-
-  // If ANY other user page is requested and they are NOT authenticated, force them to Login!
-  if (!isAuthenticated && !pathname.includes('/public')) {
-    return NextResponse.redirect(new URL('/login', request.url));
-  }
-
-  // Otherwise, user is authenticated and allowed to pass!
-  return NextResponse.next();
+function generateToken(): string {
+  // Generate a cryptographically random 32-byte hex string
+  const array = new Uint8Array(32);
+  crypto.getRandomValues(array);
+  return Array.from(array, (b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-// Config blocks middleware from running on static assets to preserve speed
+export function middleware(request: NextRequest) {
+  const response = NextResponse.next();
+
+  // ── CSRF Token Management ──────────────────────────────────────────────
+  const existingToken = request.cookies.get("csrf-token")?.value;
+
+  // Only generate a new token if one doesn't exist
+  if (!existingToken) {
+    const token = generateToken();
+    response.cookies.set({
+      name: "csrf-token",
+      value: token,
+      httpOnly: false, // JS must be able to read this
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24, // 24 hours
+    });
+  }
+
+  // ── Enforce CSRF on mutating API requests ──────────────────────────────
+  const isMutatingAPI =
+    request.nextUrl.pathname.startsWith("/api/") &&
+    ["POST", "PATCH", "PUT", "DELETE"].includes(request.method);
+
+  // Exclude auth login (it's used before JS can set the header) and chat (streaming)
+  const isExempt =
+    request.nextUrl.pathname === "/api/auth/login" ||
+    request.nextUrl.pathname === "/api/auth/logout" ||
+    request.nextUrl.pathname === "/api/auth/verify" ||
+    request.nextUrl.pathname === "/api/auth/reset" ||
+    request.nextUrl.pathname === "/api/chat";
+
+  if (isMutatingAPI && !isExempt) {
+    const cookieToken = request.cookies.get("csrf-token")?.value;
+    const headerToken = request.headers.get("x-csrf-token");
+
+    if (!cookieToken || !headerToken || cookieToken !== headerToken) {
+      return NextResponse.json(
+        { error: "CSRF token mismatch. Please refresh the page and try again." },
+        { status: 403 }
+      );
+    }
+  }
+
+  return response;
+}
+
+// Apply to all routes except static assets
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|icon.svg|manifest.json|sw.js|images/).*)",
+  ],
 };

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Calendar, Clock, Video, CheckCircle, User } from "lucide-react";
+import { csrfFetch } from "@/lib/csrf";
 
 const agents = [
   { id: 1, name: "Priya Mehta", specialty: "USA & Canada", experience: "8 years", rating: 4.9, avatar: "https://images.unsplash.com/photo-1494790108755-2616b612e5b8?w=80&h=80&fit=crop&crop=face" },
@@ -39,7 +40,7 @@ export default function BookingPage() {
     setBookingLoading(true);
     try {
       const agent = agents.find(a => a.id === selectedAgent);
-      await fetch("/api/booking", {
+      await csrfFetch("/api/booking", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

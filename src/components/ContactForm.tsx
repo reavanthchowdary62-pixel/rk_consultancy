@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Send, CheckCircle } from 'lucide-react';
+import { csrfFetch } from '@/lib/csrf';
 
 export function ContactForm() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
@@ -12,7 +13,7 @@ export function ContactForm() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch("/api/contact", {
+      const res = await csrfFetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
