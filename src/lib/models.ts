@@ -24,16 +24,25 @@ const CounselorSchema = new Schema({
   name: { type: String, required: true, trim: true },
   email: { type: String, required: true, lowercase: true, trim: true },
   bio: { type: String, maxlength: 1000, default: "" },
-  specializations: [{ type: String, trim: true }],       // e.g. ["MBA", "Computer Science", "Medicine"]
-  countries: [{ type: String, trim: true }],              // e.g. ["USA", "UK", "Canada"]
-  languages: [{ type: String, trim: true }],              // e.g. ["English", "Hindi", "Telugu"]
-  experience: { type: Number, default: 0 },               // Years of experience
-  profileImage: { type: String, default: "" },            // URL to profile image
-  hourlyRate: { type: Number, default: 0 },               // INR per session
+  specializations: [{ type: String, trim: true }],
+  countries: [{ type: String, trim: true }],
+  languages: [{ type: String, trim: true }],
+  experience: { type: Number, default: 0 },
+  profileImage: { type: String, default: "" },
+  hourlyRate: { type: Number, default: 0 },
   availability: {
-    days: [{ type: String }],                             // e.g. ["Monday", "Tuesday", "Wednesday"]
-    timeSlots: [{ type: String }],                        // e.g. ["9:00 AM", "10:00 AM"]
+    days: [{ type: String }],
+    timeSlots: [{ type: String }],
   },
+  certificates: [{
+    name: { type: String, required: true, trim: true },     // e.g. "ICEF Certified Agent"
+    issuer: { type: String, trim: true },                   // e.g. "ICEF"
+    year: { type: Number },                                  // e.g. 2024
+    url: { type: String, default: "" },                      // Link to certificate
+  }],
+  badges: [{ type: String }],                                // Auto-assigned: "Top Rated", "100+ Sessions", etc.
+  adminNotes: { type: String, default: "" },                 // Internal notes from admin
+  featured: { type: Boolean, default: false },               // Featured on homepage
   rating: { type: Number, default: 0, min: 0, max: 5 },
   totalReviews: { type: Number, default: 0 },
   totalSessions: { type: Number, default: 0 },
@@ -45,8 +54,24 @@ const CounselorSchema = new Schema({
 CounselorSchema.index({ status: 1 });
 CounselorSchema.index({ countries: 1 });
 CounselorSchema.index({ specializations: 1 });
+CounselorSchema.index({ rating: -1 });
 
 export const Counselor = models.Counselor || model("Counselor", CounselorSchema);
+
+// ─── Counselor Review Model ─────────────────────────────────────────────────
+const ReviewSchema = new Schema({
+  counselorId: { type: Schema.Types.ObjectId, ref: "Counselor", required: true },
+  studentId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  studentName: { type: String, required: true },
+  rating: { type: Number, required: true, min: 1, max: 5 },
+  comment: { type: String, maxlength: 500, default: "" },
+  createdAt: { type: Date, default: Date.now },
+});
+
+ReviewSchema.index({ counselorId: 1, createdAt: -1 });
+ReviewSchema.index({ counselorId: 1, studentId: 1 }, { unique: true }); // One review per student per counselor
+
+export const Review = models.Review || model("Review", ReviewSchema);
 
 // ─── Booking Model ───────────────────────────────────────────────────────────
 const BookingSchema = new Schema({

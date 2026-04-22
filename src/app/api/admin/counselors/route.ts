@@ -7,6 +7,8 @@ import { z } from "zod";
 
 const approvalSchema = z.object({
   action: z.enum(["APPROVED", "REJECTED", "SUSPENDED"]),
+  adminNotes: z.string().max(1000).optional(),
+  featured: z.boolean().optional(),
 });
 
 // GET /api/admin/counselors — List all counselor applications (admin only)
@@ -53,6 +55,8 @@ export async function PATCH(req: Request) {
 
     const update: Record<string, unknown> = { status: action };
     if (action === "APPROVED") update.approvedAt = new Date();
+    if (body.adminNotes !== undefined) update.adminNotes = body.adminNotes;
+    if (body.featured !== undefined) update.featured = body.featured;
 
     const counselor = await Counselor.findByIdAndUpdate(counselorId, update, { new: true });
     if (!counselor) {

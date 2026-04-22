@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, Mail, Calendar, Database, Shield, RefreshCw, GraduationCap, CheckCircle, XCircle, Clock } from "lucide-react";
+import { Users, Mail, Calendar, Database, Shield, RefreshCw, GraduationCap, CheckCircle, XCircle, Clock, FileText, Star as StarIcon, Save, ToggleLeft, ToggleRight } from "lucide-react";
 import { csrfFetch } from "@/lib/csrf";
 
 interface BookingData { _id: string; name: string; email: string; agentName: string; date: string; time: string; status: string; createdAt: string; }
 interface MessageData { _id: string; name: string; email: string; phone?: string; message?: string; read: boolean; createdAt: string; }
-interface CounselorData { _id: string; name: string; email: string; bio: string; specializations: string[]; countries: string[]; experience: number; rating: number; status: string; createdAt: string; }
+interface CounselorData { _id: string; name: string; email: string; bio: string; specializations: string[]; countries: string[]; experience: number; rating: number; status: string; createdAt: string; certificates: { name: string; issuer: string; year?: number; url?: string }[]; adminNotes: string; featured: boolean; badges: string[]; totalSessions: number; totalReviews: number; }
 
 export default function AdminPage() {
   const [tab, setTab] = useState<"bookings" | "messages" | "counselors">("bookings");
@@ -48,7 +48,7 @@ export default function AdminPage() {
         body: JSON.stringify({ action }),
       });
       if (res.ok) {
-        fetchData(); // Refresh
+        fetchData();
       } else {
         const data = await res.json();
         alert(data.error || "Failed to update counselor");
@@ -56,6 +56,25 @@ export default function AdminPage() {
     } catch {
       alert("Network error");
     }
+  };
+
+  const saveAdminNotes = async (id: string, notes: string) => {
+    try {
+      await csrfFetch(`/api/admin/counselors?id=${id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ action: "APPROVED", adminNotes: notes }),
+      });
+    } catch { /* silently fail */ }
+  };
+
+  const toggleFeatured = async (id: string, current: boolean) => {
+    try {
+      const res = await csrfFetch(`/api/admin/counselors?id=${id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ action: "APPROVED", featured: !current }),
+      });
+      if (res.ok) fetchData();
+    } catch { /* silently fail */ }
   };
 
   const statusColors: Record<string, string> = {
@@ -194,13 +213,14 @@ export default function AdminPage() {
                         {c.name.charAt(0)}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
                           <h3 className="font-bold text-gray-900 dark:text-white text-sm">{c.name}</h3>
                           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${counselorStatusColors[c.status]}`}>{c.status}</span>
+                          {c.featured && <span className="text-[9px] font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">⭐ Featured</span>}
                         </div>
-                        <p className="text-xs text-gray-500 mb-1">{c.email}</p>
-                        <p className="text-xs text-gray-500 line-clamp-1">{c.bio}</p>
-                        <div className="flex flex-wrap gap-1 mt-2">
+                        <p className="text-xs text-gray-500 mb-1">{c.email} · {c.experience}yr exp · ⭐ {c.rating.toFixed(1)} ({c.totalReviews} reviews) · {c.totalSessions} sessions</p>
+                        <p className="text-xs text-gray-500 line-clamp-2 mb-2">{c.bio}</p>
+                        <div className="flex flex-wrap gap-1 mb-2">
                           {c.specializations.slice(0, 3).map(s => (
                             <span key={s} className="text-[10px] font-bold bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 px-2 py-0.5 rounded-full">{s}</span>
                           ))}
@@ -208,34 +228,68 @@ export default function AdminPage() {
                             <span key={co} className="text-[10px] font-bold bg-accent-50 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 px-2 py-0.5 rounded-full">{co}</span>
                           ))}
                         </div>
+
+                        {/* Certificates */}
+                        {c.certificates && c.certificates.length > 0 && (
+                          <div className="mb-2">
+                            <p className="text-[10px] font-bold text-slate-400 mb-1 flex items-center gap-1"><FileText size={9} /> CERTIFICATES</p>
+                            <div className="flex flex-wrap gap-1">
+                              {c.certificates.map((cert, i) => (
+                                <span key={i} className="text-[10px] bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 rounded-full font-bold">
+                                  {cert.name} {cert.issuer ? `(${cert.issuer})` : ""} {cert.year ? `· ${cert.year}` : ""}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Admin Notes */}
+                        <div className="mt-2">
+                          <p className="text-[10px] font-bold text-slate-400 mb-1">ADMIN NOTES (internal)</p>
+                          <div className="flex gap-2">
+                            <textarea
+                              defaultValue={c.adminNotes || ""}
+                              placeholder="Add internal notes about this counselor..."
+                              rows={2}
+                              className="flex-1 bg-slate-50 dark:bg-slate-600 border border-slate-200 dark:border-slate-500 rounded-lg p-2 text-xs text-slate-700 dark:text-slate-200 outline-none focus:ring-1 focus:ring-primary resize-none placeholder-slate-400"
+                              onBlur={(e) => saveAdminNotes(c._id, e.target.value)}
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex flex-col items-end gap-2 shrink-0">
                       {c.status === "PENDING" && (
                         <>
                           <button onClick={() => handleCounselorAction(c._id, "APPROVED")}
-                            className="flex items-center gap-1.5 text-xs font-bold bg-emerald-600 text-white px-3 py-2 rounded-xl hover:bg-emerald-700 transition-colors">
+                            className="flex items-center gap-1.5 text-xs font-bold bg-emerald-600 text-white px-3 py-2 rounded-xl hover:bg-emerald-700 transition-colors w-full justify-center">
                             <CheckCircle size={13} /> Approve
                           </button>
                           <button onClick={() => handleCounselorAction(c._id, "REJECTED")}
-                            className="flex items-center gap-1.5 text-xs font-bold bg-red-600 text-white px-3 py-2 rounded-xl hover:bg-red-700 transition-colors">
+                            className="flex items-center gap-1.5 text-xs font-bold bg-red-600 text-white px-3 py-2 rounded-xl hover:bg-red-700 transition-colors w-full justify-center">
                             <XCircle size={13} /> Reject
                           </button>
                         </>
                       )}
                       {c.status === "APPROVED" && (
-                        <button onClick={() => handleCounselorAction(c._id, "SUSPENDED")}
-                          className="flex items-center gap-1.5 text-xs font-bold border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-400 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
-                          Suspend
-                        </button>
+                        <>
+                          <button onClick={() => toggleFeatured(c._id, c.featured)}
+                            className={`flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl transition-colors w-full justify-center ${c.featured ? "bg-amber-100 text-amber-700 hover:bg-amber-200" : "border border-slate-200 dark:border-slate-600 text-slate-500 hover:bg-slate-100"}`}>
+                            {c.featured ? <><ToggleRight size={13} /> Unfeatured</> : <><ToggleLeft size={13} /> Feature</>}
+                          </button>
+                          <button onClick={() => handleCounselorAction(c._id, "SUSPENDED")}
+                            className="flex items-center gap-1.5 text-xs font-bold border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-400 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors w-full justify-center">
+                            Suspend
+                          </button>
+                        </>
                       )}
                       {(c.status === "REJECTED" || c.status === "SUSPENDED") && (
                         <button onClick={() => handleCounselorAction(c._id, "APPROVED")}
                           className="flex items-center gap-1.5 text-xs font-bold bg-emerald-600 text-white px-3 py-2 rounded-xl hover:bg-emerald-700 transition-colors">
                           <CheckCircle size={13} /> Re-approve
-                          </button>
+                        </button>
                       )}
                     </div>
                   </div>

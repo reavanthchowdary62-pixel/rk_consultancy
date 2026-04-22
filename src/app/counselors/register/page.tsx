@@ -4,7 +4,8 @@ import { useState } from "react";
 import { csrfFetch } from "@/lib/csrf";
 import {
   GraduationCap, Globe, BookOpen, Languages, Clock,
-  CheckCircle, AlertCircle, ArrowLeft, Sparkles, Shield
+  CheckCircle, AlertCircle, ArrowLeft, Sparkles, Shield,
+  FileText, Plus, Trash2, Image
 } from "lucide-react";
 import Link from "next/link";
 
@@ -14,6 +15,13 @@ const LANGUAGES = ["English", "Hindi", "Telugu", "Tamil", "Bengali", "Marathi", 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 const TIME_SLOTS = ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"];
 
+interface Certificate {
+  name: string;
+  issuer: string;
+  year: number | undefined;
+  url: string;
+}
+
 export default function CounselorRegisterPage() {
   const [bio, setBio] = useState("");
   const [specializations, setSpecializations] = useState<string[]>([]);
@@ -21,13 +29,30 @@ export default function CounselorRegisterPage() {
   const [languages, setLanguages] = useState<string[]>(["English"]);
   const [experience, setExperience] = useState(1);
   const [hourlyRate, setHourlyRate] = useState(500);
+  const [profileImage, setProfileImage] = useState("");
   const [days, setDays] = useState<string[]>([]);
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
+  const [certificates, setCertificates] = useState<Certificate[]>([]);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{ success?: boolean; message?: string; error?: string } | null>(null);
 
   const toggleList = (list: string[], item: string, setter: (l: string[]) => void) => {
     setter(list.includes(item) ? list.filter((i) => i !== item) : [...list, item]);
+  };
+
+  const addCertificate = () => {
+    if (certificates.length >= 10) return;
+    setCertificates([...certificates, { name: "", issuer: "", year: undefined, url: "" }]);
+  };
+
+  const updateCert = (idx: number, field: keyof Certificate, value: string | number) => {
+    const updated = [...certificates];
+    updated[idx] = { ...updated[idx], [field]: value };
+    setCertificates(updated);
+  };
+
+  const removeCert = (idx: number) => {
+    setCertificates(certificates.filter((_, i) => i !== idx));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -36,14 +61,18 @@ export default function CounselorRegisterPage() {
     if (countries.length === 0) return setResult({ error: "Select at least 1 country" });
     if (days.length === 0 || timeSlots.length === 0) return setResult({ error: "Select your availability" });
 
+    // Validate certificates
+    const validCerts = certificates.filter(c => c.name.trim());
+    
     setLoading(true);
     setResult(null);
     try {
       const res = await csrfFetch("/api/counselors/register", {
         method: "POST",
         body: JSON.stringify({
-          bio, specializations, countries, languages, experience, hourlyRate,
+          bio, specializations, countries, languages, experience, hourlyRate, profileImage,
           availability: { days, timeSlots },
+          certificates: validCerts,
         }),
       });
       const data = await res.json();
@@ -68,9 +97,7 @@ export default function CounselorRegisterPage() {
           </div>
           <h2 className="font-display font-extrabold text-2xl text-slate-900 dark:text-white mb-2">Application Submitted!</h2>
           <p className="text-slate-500 text-sm mb-6">{result.message}</p>
-          <Link href="/counselors" className="inline-flex items-center gap-2 text-sm font-bold text-primary">
-            <ArrowLeft size={14} /> Back to Counselors
-          </Link>
+          <Link href="/counselors" className="inline-flex items-center gap-2 text-sm font-bold text-primary"><ArrowLeft size={14} /> Back to Counselors</Link>
         </div>
       </div>
     );
@@ -104,6 +131,17 @@ export default function CounselorRegisterPage() {
               <p className="text-red-700 dark:text-red-300 text-sm font-semibold">{result.error}</p>
             </div>
           )}
+
+          {/* Profile Image */}
+          <div>
+            <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+              <Image size={14} /> Profile Photo URL
+            </label>
+            <input type="url" value={profileImage} onChange={(e) => setProfileImage(e.target.value)}
+              placeholder="https://example.com/your-photo.jpg (optional)"
+              className="w-full bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl p-3 text-sm text-slate-800 dark:text-slate-200 outline-none focus:ring-2 focus:ring-primary placeholder-slate-400" />
+            <p className="text-xs text-slate-400 mt-1">Paste a link to your professional photo. Square photos work best.</p>
+          </div>
 
           {/* Bio */}
           <div>
@@ -177,6 +215,42 @@ export default function CounselorRegisterPage() {
               <input type="number" min={0} max={100000} value={hourlyRate} onChange={(e) => setHourlyRate(Number(e.target.value))}
                 className="w-full bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl p-3 text-sm text-slate-800 dark:text-slate-200 outline-none focus:ring-2 focus:ring-primary" />
             </div>
+          </div>
+
+          {/* Certificates */}
+          <div>
+            <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+              <FileText size={14} /> Certificates & Credentials
+            </label>
+            <p className="text-xs text-slate-400 mb-3">Add your professional certificates to build trust with students.</p>
+            
+            <div className="space-y-3 mb-3">
+              {certificates.map((cert, idx) => (
+                <div key={idx} className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4 border border-slate-200 dark:border-slate-600">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs font-bold text-slate-500">Certificate #{idx + 1}</span>
+                    <button type="button" onClick={() => removeCert(idx)} className="text-red-400 hover:text-red-600 transition-colors">
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <input type="text" placeholder="Certificate name *" value={cert.name} onChange={(e) => updateCert(idx, "name", e.target.value)} required
+                      className="bg-white dark:bg-slate-600 border border-slate-200 dark:border-slate-500 rounded-lg p-2.5 text-xs text-slate-800 dark:text-slate-200 outline-none focus:ring-2 focus:ring-primary placeholder-slate-400" />
+                    <input type="text" placeholder="Issuing organization" value={cert.issuer} onChange={(e) => updateCert(idx, "issuer", e.target.value)}
+                      className="bg-white dark:bg-slate-600 border border-slate-200 dark:border-slate-500 rounded-lg p-2.5 text-xs text-slate-800 dark:text-slate-200 outline-none focus:ring-2 focus:ring-primary placeholder-slate-400" />
+                    <input type="number" placeholder="Year" min={1990} max={2030} value={cert.year || ""} onChange={(e) => updateCert(idx, "year", Number(e.target.value))}
+                      className="bg-white dark:bg-slate-600 border border-slate-200 dark:border-slate-500 rounded-lg p-2.5 text-xs text-slate-800 dark:text-slate-200 outline-none focus:ring-2 focus:ring-primary placeholder-slate-400" />
+                    <input type="url" placeholder="Link to certificate (optional)" value={cert.url} onChange={(e) => updateCert(idx, "url", e.target.value)}
+                      className="bg-white dark:bg-slate-600 border border-slate-200 dark:border-slate-500 rounded-lg p-2.5 text-xs text-slate-800 dark:text-slate-200 outline-none focus:ring-2 focus:ring-primary placeholder-slate-400" />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <button type="button" onClick={addCertificate} disabled={certificates.length >= 10}
+              className="flex items-center gap-2 text-xs font-bold text-primary hover:text-primary-700 transition-colors disabled:text-slate-300 disabled:cursor-not-allowed">
+              <Plus size={14} /> Add Certificate {certificates.length > 0 && `(${certificates.length}/10)`}
+            </button>
           </div>
 
           {/* Availability */}

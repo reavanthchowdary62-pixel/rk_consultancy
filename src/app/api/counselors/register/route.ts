@@ -12,10 +12,17 @@ const registerSchema = z.object({
   languages: z.array(z.string().max(30)).min(1).max(5),
   experience: z.number().min(0).max(50),
   hourlyRate: z.number().min(0).max(100000),
+  profileImage: z.string().max(500).optional().default(""),
   availability: z.object({
     days: z.array(z.string()).min(1),
     timeSlots: z.array(z.string()).min(1),
   }),
+  certificates: z.array(z.object({
+    name: z.string().max(100),
+    issuer: z.string().max(100).optional().default(""),
+    year: z.number().min(1990).max(2030).optional(),
+    url: z.string().max(500).optional().default(""),
+  })).max(10).optional().default([]),
 });
 
 // POST /api/counselors/register — Self-registration for counselor role
