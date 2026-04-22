@@ -32,6 +32,7 @@ export const metadata: Metadata = {
 const navLinks = [
   { href: "/",              label: "Home" },
   { href: "/compare",       label: "Compare" },
+  { href: "/counselors",    label: "Counselors" },
   { href: "/scholarships",  label: "Scholarships" },
   { href: "/visa",          label: "Visa Guide" },
   { href: "/booking",       label: "Bookings" },
